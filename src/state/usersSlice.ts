@@ -23,23 +23,34 @@ export const usersSlice = createSlice({
     name: 'users',
     initialState: initialState,
     reducers: {
-        logInUser: (state, action: PayloadAction<User>) => {
-            const {userName} = action.payload;
+        logInUser: (state, action: PayloadAction<string>) => {
+            const userName = action.payload;
             const userIndex = state.users.map(user => user.userName).indexOf(userName);
             if (state.users.map(user => user.userName).includes(userName)) {
-                state.loggedUser = action.payload;
-
+                state.loggedUser = {userName, money: state.users[userIndex].money};
             } else {
-                action.payload.money = 100;
-                state.users = [...state.users, action.payload];
-                state.loggedUser = action.payload;
-
+                state.users = [...state.users, {userName, money: 100}];
+                state.loggedUser = {userName, money: 100};
             }
             saveUsersInLocalStorage(state.users);
+        },
+        logOutUser: (state) => {
+            state.loggedUser = null;
+        },
+        changeLoggedUserMoney: (state, action: PayloadAction<number>) => {
+            const money = action.payload;
+            if (state.loggedUser !== null) {
+                const userIndex = state.users.map(user => user.userName).indexOf(state.loggedUser.userName);
+                state.loggedUser.money = money;
+                state.users[userIndex].money = money;
+                state.users = [...state.users];
+                saveUsersInLocalStorage(state.users);
+            }
+
         }
     }
 });
 
 
-export const {logInUser} = usersSlice.actions;
+export const {logInUser, logOutUser, changeLoggedUserMoney} = usersSlice.actions;
 export default usersSlice.reducer;

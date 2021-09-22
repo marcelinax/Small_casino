@@ -1,13 +1,77 @@
-import React, {useEffect, useState} from 'react';
+import React, {ChangeEvent, useEffect, useState} from 'react';
+import {useDispatch, useSelector} from "react-redux";
+import {GameMode} from "../enums/GameMode";
+import {changeLoggedUserMoney, logOutUser} from "../state/usersSlice";
+import {RootState} from "../store";
 
 const Casino: React.FC = () => {
 
     const [dicesNumber, setDicesNumber] = useState<number[]>([]);
-    const [startGame, setStartGame] = useState<boolean>(false);
     const [dicesPosition, setDicesPosition] = useState<{ left: number, top: number }[]>([]);
+    const [moneyForBet, setMoneyForBet] = useState<number>(0);
+    const [sumFromDices, setSumFromDices] = useState<number>(0);
+    const [inputErrorMessage, setInputErrorMessage] = useState<string>('');
+    const [currentGameMode, setCurrentGameMode] = useState<number>(5);
+    const [result, setResult] = useState<number>(0);
+    const [userDiceNumber, setUserDiceNumber] = useState<string>('');
+
+    const dispatch = useDispatch();
+    const loggedUser = useSelector((state: RootState) => state.users.loggedUser);
+
+
+    const handleMoneyForBetInput = (e: ChangeEvent<HTMLInputElement>): void => {
+        setMoneyForBet(+e.target.value);
+    };
+    const handleUserDiceNumberInput = (e: ChangeEvent<HTMLInputElement>): void => {
+        setUserDiceNumber(e.target.value);
+    };
+
+    const startGame = (): void => {
+        if (moneyForBet === 0) {
+            setInputErrorMessage("Enter valid sum!");
+            return;
+        }
+        if (currentGameMode > 4) {
+            setInputErrorMessage("Choose a game mode!");
+            return;
+        }
+        if (currentGameMode === 4 && userDiceNumber === '') {
+            setInputErrorMessage("Enter a number dice!");
+            return;
+        }
+        if (loggedUser !== null && loggedUser.money <= 0) {
+            setInputErrorMessage("You have no money!");
+            return;
+        }
+        setSumFromDices(0);
+        setResult(0);
+        setRandomDicesNumber();
+        setRandomDicePosition();
+    };
+
+    const checkGameResult = (): void => {
+        console.log(sumFromDices);
+        console.log(moneyForBet);
+        if (currentGameMode === GameMode.LESSTHAN14 && sumFromDices < 14) {
+            console.log('win');
+            setResult(Math.floor(moneyForBet * 1.2));
+        } else if (currentGameMode === GameMode.LESSTHANOREQUALTO14 && sumFromDices <= 14) {
+            setResult(Math.floor(moneyForBet * 1.4));
+        } else if (currentGameMode === GameMode.MORETHAN14 && sumFromDices > 14) {
+            setResult(Math.floor(moneyForBet * 1.2));
+        } else if (currentGameMode === GameMode.MORETHANOREQUALTO14 && sumFromDices >= 14) {
+            setResult(Math.floor(moneyForBet * 1.4));
+        } else if (currentGameMode === GameMode.EQUALTO && sumFromDices === +userDiceNumber) {
+            setResult(Math.floor(moneyForBet * 1.4));
+        } else {
+            console.log('lose');
+            setResult(moneyForBet * (-1));
+        }
+
+    };
+
 
     const dicePositionCondition = (dicesPositions: { left: number, top: number }[], currentCoordinates: { left: number, top: number }): boolean => {
-        console.log(dicesPositions.length);
         for (let i = 0; i < dicesPositions.length; i++) {
             const comparedPosition = dicesPositions[i];
             if (currentCoordinates.left > comparedPosition.left - 100
@@ -65,8 +129,6 @@ const Casino: React.FC = () => {
         for (let i = 0; i < 4; i++) {
             const diceNumber = Math.floor(Math.random() * (max - min)) + min;
             dicesNumber.push(diceNumber);
-
-
         }
         setDicesNumber([...dicesNumber]);
 
@@ -83,14 +145,30 @@ const Casino: React.FC = () => {
         return amountRenderingDicesNumber;
     };
 
+    useEffect(() => {
+        if (dicesNumber.length > 0)
+            setSumFromDices(dicesNumber.reduce((acc, cur) => acc + cur));
+    }, [dicesNumber]);
+
 
     useEffect(() => {
-        setRandomDicesNumber();
-        setRandomDicePosition();
-    }, [startGame]);
+        dispatch(changeLoggedUserMoney(loggedUser !== null ? loggedUser.money + result : 0));
+    }, [result]);
+    useEffect(() => {
+        if (sumFromDices > 0)
+            checkGameResult();
+    }, [sumFromDices]);
+
 
     return (
         <div className={'casino'}>
+            <div className={'casino-user-box'}>
+                <div className={'casino-user-box-account-balance'}>
+                    <p>$ {loggedUser !== null ? loggedUser.money : ''}</p>
+                </div>
+                <button onClick={() => dispatch(logOutUser())}><i className="bx bx-log-out"/></button>
+            </div>
+
 
             <div className={'casino-left'}>
                 <div className={'casino-left-game-board'}>
@@ -104,15 +182,21 @@ const Casino: React.FC = () => {
             </div>
             <div className={'casino-middle'}>
                 <div className={'casino-middle-game-betting-modes'}>
-                    <button>Less than 14</button>
-                    <button>Less than or equal to 14</button>
-                    <button>More than 14</button>
-                    <button>More than or equal to 14</button>
-                    <button>Equal to <input/></button>
+                    <button onClick={() => setCurrentGameMode(0)}>Less than 14</button>
+                    <button onClick={() => setCurrentGameMode(1)}>Less than or equal to 14</button>
+                    <button onClick={() => setCurrentGameMode(2)}>More than 14</button>
+                    <button onClick={() => setCurrentGameMode(3)}>More than or equal to 14</button>
+                    <button onClick={() => setCurrentGameMode(4)}>Equal to
+                        <input value={userDiceNumber} onChange={handleUserDiceNumberInput}/>
+                    </button>
                 </div>
-                <button onClick={() => setStartGame(!startGame)}>Play</button>
+                <button onClick={startGame}>Play</button>
             </div>
             <div className={'casino-right'}>
+                <div className={'casino-right-bet-box'}>
+                    <input value={moneyForBet} onChange={handleMoneyForBetInput}/>
+                    {inputErrorMessage ? <span>{inputErrorMessage}</span> : <></>}
+                </div>
                 <h1>Congratulations! You won $50</h1>
             </div>
 

@@ -1,11 +1,12 @@
 import React, {ChangeEvent, useState} from 'react';
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {logInUser} from "../state/usersSlice";
+import {RootState} from "../store";
 
 const CasinoLoginForm: React.FC = () => {
 
     const [userName, setUserName] = useState<string>('');
-
+    const loggedUser = useSelector((state: RootState) => state.users.loggedUser);
 
     const dispatch = useDispatch();
 
@@ -24,7 +25,8 @@ const CasinoLoginForm: React.FC = () => {
                     <input value={userName} onChange={handleUserNameInput}/>
                 </div>
 
-                <button onClick={() => dispatch(logInUser({userName, money: 0}))}>Enter the casino</button>
+                <button onClick={() => dispatch(logInUser(userName))}>Enter the casino
+                </button>
             </div>
         </div>);
 };

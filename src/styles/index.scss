@@ -73,6 +73,44 @@
   display: flex;
   background-color: #212335;
 
+  &-user-box {
+    display: flex;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    align-items: center;
+
+    &-account-balance {
+      display: flex;
+      width: 100px;
+      height: 30px;
+      box-shadow: 0 0 15px rgba(#000, .4);
+      align-items: center;
+      justify-content: center;
+      color: white;
+      border-radius: 15px;
+
+      p {
+        font-size: 12px;
+      }
+    }
+
+    button {
+      margin-left: 20px;
+      width: 30px;
+      height: 30px;
+      border-radius: 15px;
+      transition: .3s all;
+
+      &:hover {
+        transform: scale(0.9);
+      }
+
+    }
+
+
+  }
+
   &-left, &-middle, &-right {
     width: calc(33.3% - 4rem);
     display: flex;
@@ -153,6 +191,7 @@
       width: 100%;
       flex-direction: column;
 
+
       button {
         background-color: #CF2029;
 
@@ -168,8 +207,39 @@
   &-right {
     width: calc(100% - 8rem - 33.3% - 20%);
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
     color: white;
+    flex-direction: column;
+
+    &-bet-box {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+
+
+      input {
+        box-shadow: inset 5px 5px 6px #181926, inset -5px -5px 6px #2a2d44;
+        background-color: transparent;
+        outline: none;
+        border: none;
+        border-radius: 20px;
+        height: 50px;
+        width: calc(400px - 20px);
+        padding-left: 20px;
+        color: white;
+
+
+      }
+
+      span {
+        color: #CF2029;
+        margin-top: 10px;
+        font-size: 12px;
+      }
+
+    }
   }
 
 }
