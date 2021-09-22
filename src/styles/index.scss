@@ -92,17 +92,26 @@
       align-items: center;
       justify-content: center;
       flex-direction: column;
+      position: relative;
 
     }
 
     .dice {
-
+      position: absolute;
       width: 80px;
       height: 80px;
       margin-bottom: 50px;
       background-color: #2a2d44;
       box-shadow: 5px 5px 0px #1c1e2e, -5px -5px 0px transparent;
       border-radius: 10px;
+
+      span {
+        display: block;
+        height: 10px;
+        width: 10px;
+        background-color: white;
+        border-radius: 50%;
+      }
     }
 
   }
@@ -175,4 +184,178 @@ button {
   border: none;
   background-color: #CF2029;
   color: #FFFF;
+}
+
+
+.dice {
+  &-with-one-dot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &-with-two-dot {
+    span {
+      position: absolute;
+
+      &:first-of-type {
+
+        left: 10px;
+        bottom: 10px;
+
+      }
+
+      &:last-of-type {
+
+        right: 10px;
+        top: 10px;
+      }
+    }
+  }
+
+  &-with-three-dot {
+    span {
+      position: absolute;
+
+      &:first-child {
+
+        left: 10px;
+        top: 10px;
+      }
+
+      &:nth-child(2) {
+
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      &:last-child {
+
+        right: 10px;
+        bottom: 10px;
+      }
+    }
+
+  }
+
+  &-with-four-dot {
+    span {
+      position: absolute;
+
+      &:first-child {
+
+        left: 10px;
+        top: 10px;
+
+      }
+
+      &:nth-child(2) {
+
+        left: 10px;
+        bottom: 10px;
+
+      }
+
+      &:nth-child(3) {
+
+        right: 10px;
+        top: 10px;
+
+      }
+
+      &:last-child {
+
+        right: 10px;
+        bottom: 10px;
+      }
+    }
+
+  }
+
+  &-with-five-dot {
+    span {
+      position: absolute;
+
+      &:first-child {
+
+        left: 10px;
+        top: 10px;
+
+      }
+
+      &:nth-child(2) {
+
+        left: 10px;
+        bottom: 10px;
+
+      }
+
+      &:nth-child(3) {
+
+        right: 10px;
+        top: 10px;
+
+      }
+
+      &:nth-child(4) {
+
+        right: 10px;
+        bottom: 10px;
+      }
+
+      &:last-child {
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+  }
+
+  &-with-six-dot {
+    span {
+      position: absolute;
+
+      &:first-child {
+
+        left: 10px;
+        top: 10px;
+
+      }
+
+      &:nth-child(2) {
+
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+
+      }
+
+      &:nth-child(3) {
+
+        left: 10px;
+        bottom: 10px;
+
+      }
+
+      &:nth-child(4) {
+
+        right: 10px;
+        top: 10px;
+      }
+
+      &:nth-child(5) {
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      &:last-child {
+        right: 10px;
+        bottom: 10px;
+      }
+    }
+
+  }
 }
