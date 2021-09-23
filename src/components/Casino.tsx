@@ -27,8 +27,8 @@ const Casino: React.FC = () => {
     };
 
     const startGame = (): void => {
-        if (moneyForBet === 0) {
-            setInputErrorMessage("Enter valid sum!");
+        if (moneyForBet < 10) {
+            setInputErrorMessage("Enter a sum greater than 10!");
             return;
         }
         if (currentGameMode > 4) {
@@ -44,6 +44,7 @@ const Casino: React.FC = () => {
             return;
         }
         setSumFromDices(0);
+        setInputErrorMessage('');
         setResult(0);
         setRandomDicesNumber();
         setRandomDicePosition();
@@ -54,15 +55,15 @@ const Casino: React.FC = () => {
         console.log(moneyForBet);
         if (currentGameMode === GameMode.LESSTHAN14 && sumFromDices < 14) {
             console.log('win');
-            setResult(Math.floor(moneyForBet * 1.2));
+            setResult(+(moneyForBet * 1.2).toFixed(2));
         } else if (currentGameMode === GameMode.LESSTHANOREQUALTO14 && sumFromDices <= 14) {
-            setResult(Math.floor(moneyForBet * 1.4));
+            setResult(+(moneyForBet * 1.4).toFixed(2));
         } else if (currentGameMode === GameMode.MORETHAN14 && sumFromDices > 14) {
-            setResult(Math.floor(moneyForBet * 1.2));
+            setResult(+(moneyForBet * 1.2).toFixed(2));
         } else if (currentGameMode === GameMode.MORETHANOREQUALTO14 && sumFromDices >= 14) {
-            setResult(Math.floor(moneyForBet * 1.4));
+            setResult(+(moneyForBet * 1.4).toFixed(2));
         } else if (currentGameMode === GameMode.EQUALTO && sumFromDices === +userDiceNumber) {
-            setResult(Math.floor(moneyForBet * 1.4));
+            setResult(+(moneyForBet * 1.4).toFixed(2));
         } else {
             console.log('lose');
             setResult(moneyForBet * (-1));
@@ -164,7 +165,7 @@ const Casino: React.FC = () => {
         <div className={'casino'}>
             <div className={'casino-user-box'}>
                 <div className={'casino-user-box-account-balance'}>
-                    <p>$ {loggedUser !== null ? loggedUser.money : ''}</p>
+                    <p>$ {loggedUser !== null ? loggedUser.money.toFixed(2) : ''}</p>
                 </div>
                 <button onClick={() => dispatch(logOutUser())}><i className="bx bx-log-out"/></button>
             </div>
@@ -177,16 +178,29 @@ const Casino: React.FC = () => {
                             {renderDicesNumber(dicesNumber[index])}
                         </div>
                     ))}
-
+                    <p>{dicesNumber.length > 0 ? sumFromDices : ''}</p>
                 </div>
             </div>
             <div className={'casino-middle'}>
                 <div className={'casino-middle-game-betting-modes'}>
-                    <button onClick={() => setCurrentGameMode(0)}>Less than 14</button>
-                    <button onClick={() => setCurrentGameMode(1)}>Less than or equal to 14</button>
-                    <button onClick={() => setCurrentGameMode(2)}>More than 14</button>
-                    <button onClick={() => setCurrentGameMode(3)}>More than or equal to 14</button>
-                    <button onClick={() => setCurrentGameMode(4)}>Equal to
+                    <button onClick={() => setCurrentGameMode(0)}
+                            className={currentGameMode === GameMode.LESSTHAN14 ? 'btn--active' : ''}>Less than 14
+                    </button>
+                    <button onClick={() => setCurrentGameMode(1)}
+                            className={currentGameMode === GameMode.LESSTHANOREQUALTO14 ? 'btn--active' : ''}>Less than
+                        or equal
+                        to 14
+                    </button>
+                    <button onClick={() => setCurrentGameMode(2)}
+                            className={currentGameMode === GameMode.MORETHAN14 ? 'btn--active' : ''}>More than 14
+                    </button>
+                    <button onClick={() => setCurrentGameMode(3)}
+                            className={currentGameMode === GameMode.MORETHANOREQUALTO14 ? 'btn--active' : ''}>More than
+                        or equal
+                        to 14
+                    </button>
+                    <button onClick={() => setCurrentGameMode(4)}
+                            className={currentGameMode === GameMode.EQUALTO ? 'btn--active' : ''}>Equal to
                         <input value={userDiceNumber} onChange={handleUserDiceNumberInput}/>
                     </button>
                 </div>
@@ -197,7 +211,9 @@ const Casino: React.FC = () => {
                     <input value={moneyForBet} onChange={handleMoneyForBetInput}/>
                     {inputErrorMessage ? <span>{inputErrorMessage}</span> : <></>}
                 </div>
-                <h1>Congratulations! You won $50</h1>
+                {result !== 0 ? <h1>{result < 0 ? `You lost $ ${result * -1}` : `You won $ ${result}`}</h1> : <></>}
+                {loggedUser !== null && loggedUser.money < 0 && <h1>You went bankrupt. You can't play any more...</h1>}
+
             </div>
 
         </div>

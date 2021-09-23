@@ -29,8 +29,8 @@ export const usersSlice = createSlice({
             if (state.users.map(user => user.userName).includes(userName)) {
                 state.loggedUser = {userName, money: state.users[userIndex].money};
             } else {
-                state.users = [...state.users, {userName, money: 100}];
-                state.loggedUser = {userName, money: 100};
+                state.users = [...state.users, {userName, money: 500}];
+                state.loggedUser = {userName, money: 500};
             }
             saveUsersInLocalStorage(state.users);
         },

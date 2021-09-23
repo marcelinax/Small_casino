@@ -132,6 +132,15 @@
       flex-direction: column;
       position: relative;
 
+      p {
+        position: absolute;
+        bottom: 1rem;
+        left: 50%;
+        color: white;
+        font-weight: 600;
+        transform: translateX(-50%);
+      }
+
     }
 
     .dice {
@@ -160,7 +169,7 @@
     justify-content: center;
     margin-left: 2rem;
 
-    button {
+    button, .btn--active {
       width: 200px;
       padding: 15px 0;
       border-radius: 15px;
@@ -183,6 +192,12 @@
         text-align: center;
         color: white;
       }
+
+    }
+
+    .btn--active {
+      background-color: #CF2029;
+      transform: scale(0.9);
 
     }
 
